@@ -1,0 +1,49 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    margin-right: 10px;
+}
+
+.left-column {
+    margin-left: 10px; /* Space between middle and left box */
+}
+
+.middle-box {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+}
+
+.op-box {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 20px;
+     margin-bottom: 10px;
+}
+
+.player-box {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.game-box {
+    flex: 1;
+    text-align: center;
+}
