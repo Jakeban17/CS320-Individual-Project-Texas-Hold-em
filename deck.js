@@ -6,7 +6,7 @@ class Deck {
     }
 
     //creates the deck
-    createDeck() {
+    static createDeck() {
         //52 cards, full deck
         const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
         const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
@@ -21,7 +21,7 @@ class Deck {
     }
 
     //shuffle the deck
-    shuffle() {
+    static shuffle() {
         for (let i = this.cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
@@ -30,7 +30,7 @@ class Deck {
     }
 
     //deals the first card in cards[], use suffle before calling
-    dealCard(numCards) {
+    static dealCard(numCards) {
         if (numCards > this.cards.length) {
             console.log('ERROR: Not enough cards in the deck');
             return null;
@@ -64,4 +64,4 @@ function testDeck() {
     }
 }
 
-testDeck();
+//testDeck();
