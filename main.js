@@ -1,8 +1,8 @@
 class Deck {
-    static cards = []; // Define cards as a static property
+    static cards = []; 
 
     constructor() {
-        // No need for this.cards = []; here
+        
     }
 
     //creates the deck
@@ -14,7 +14,7 @@ class Deck {
         //inputs cards into cards
         for (const suit of suits) {
             for (const value of values) {
-                Deck.cards.push({ suit, value }); // Access cards directly using Deck.cards
+                Deck.cards.push({ suit, value });
             }
         }
         console.log("UPDATE: Deck created")
@@ -40,12 +40,38 @@ class Deck {
     }
 }
 
+class Player{
+    constructor(balance = 0){
+        this.balance = balance;
+        this.hand = [];
+    }
+
+    //Player balance modifications
+    static addFunds(amount) {
+        this.balance += amount;
+    }
+    static deductFunds(amount) {
+        if (amount > this.balance) {
+            console.log("Insufficient funds");
+            return false;
+        }
+        this.balance -= amount;
+        return true;
+    }
+
+    //Player hand modifications
+    static addToHand(cards) {
+        this.hand = cards;
+        return this.hand;
+    }
+    static resetHand() {
+        this.hand = [];
+    }
+}
+
+
+
 function main() {
-    //const hostPlayer = new player(null, null);
-    //const computertPlayer0 = new player(null, null);
-    //const computertPlayer1 = new player(null, null);
-    //const computertPlayer2 = new player(null, null);
-    //const computertPlayer3 = new player(null, null);
     Deck.createDeck();
     var roundCount = 1;
     var dealerHand = [];
@@ -53,12 +79,13 @@ function main() {
     Deck.shuffle();
 
     dealerHand = Deck.dealCard(3);
-    roundCount++; 
+    Player.addToHand(Deck.dealCard(2))
         
-    console.log(dealerHand);
-    console.log(dealerHand[0]);
-    console.log(dealerHand[1]);
-    console.log(dealerHand[2]);
+    console.log("D:",dealerHand[0]);
+    console.log("D:",dealerHand[1]);
+    console.log("D:",dealerHand[2]);
+    console.log("P:",Player.hand[0]);
+    console.log("P:",Player.hand[1]);
 }
 
 main();
