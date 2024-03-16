@@ -1,49 +1,138 @@
-body, html {
+body {
+    background-color: rgb(65, 65, 65);
     margin: 0;
     padding: 0;
-    height: 100%;
+    font-family: Arial, sans-serif;
+}
+img {
+    width: 100px;
+    height: auto;
 }
 
-.container {
+.player-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    background-color: #333;
+    color: white;
     display: flex;
-    justify-content: space-between;
-    height: 100%;
 }
-
-.left-column, .right-column {
+.player-content {
     display: flex;
     flex-direction: column;
-    width: 25%;
-    margin-right: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
-
-.left-column {
-    margin-left: 10px; 
+.player-text {
+    color: white;
+    margin-bottom: 10px;
 }
-
-.middle-box {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30%;
+.player-name {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #333;
 }
-
-.op-box {
-    flex: 1;
-    border: 1px solid #ccc;
-    padding: 20px;
-     margin-bottom: 10px;
+.action-box,
+.hand-box,
+.fund-box {
+    flex: 1; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center;
+    border: 1px solid white; 
 }
-
-.player-box {
-    flex: 1;
-    border: 1px solid #ccc;
-    padding: 20px;
+.hand-box .title {
+    color: white;
+    font-size: 20px;
     margin-bottom: 10px;
 }
 
-.game-box {
+.hand-images {
+    display: flex;
+    align-items: center;
+}
+
+.hand-images img {
+    width: 100px; 
+    height: auto;
+    margin: 0 5px; 
+    padding-top: 30px; 
+}
+.fund-box {
     flex: 1;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid white;
+}
+
+.fund-box .title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 50px;
+}
+
+.fund-box div {
+    margin-bottom: 10px;
+}
+
+.fund-box label {
+    color: white;
+}
+
+.fund-box input[type="text"] {
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.fund-box button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.fund-box button:hover {
+    background-color: #45a049;
+}
+.action-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid white;
+}
+
+.action-box .title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 50px;
+}
+
+.button-container {
+    display: flex;
+}
+
+.action-box button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.action-box button:last-child {
+    margin-right: 0;
+}
+
+.action-box button:hover {
+    background-color: #45a049;
 }
