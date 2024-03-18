@@ -7,37 +7,82 @@
         <link rel="stylesheet" type="text/css" href="styles.css">
     </head>
     <body>
+        <div class="opp-container">
+            <div class="opp-box">
+                <div class="title">Stephen (CPU)</div>
+                <div class="hand-images">
+                    <img id="c1c1" src="PlayingCards/card.png" alt="Card1">
+                    <img id="c1c2" src="PlayingCards/card.png" alt="Card2">
+                </div>
+            </div>
+            <div class="opp-box">
+                <div class="title">Trisha (CPU)</div>
+                <div class="hand-images">
+                    <img id="c2c1" src="PlayingCards/card.png" alt="Card1">
+                    <img id="c2c2" src="PlayingCards/card.png" alt="Card2">
+                </div>
+            </div>
+            <div class="opp-box">
+                <div class="title">Oden (CPU)</div>
+                <div class="hand-images">
+                    <img id="c3c1" src="PlayingCards/card.png" alt="Card1">
+                    <img id="c3c2" src="PlayingCards/card.png" alt="Card2">
+                </div>
+            </div>
+            <div class="opp-box">
+                <div class="title">Penelope (CPU)</div>
+                <div class="hand-images">
+                    <img id="c4c1" src="PlayingCards/card.png" alt="Card1">
+                    <img id="c4c2" src="PlayingCards/card.png" alt="Card2">
+                </div>
+            </div>
+        </div>
 
-        <img src="PlayingCards/AC.png" alt="Card1">
-        <img src="PlayingCards/KS.png" alt="Card2">
+        <div class="game-container">
+            <label id="gamepot-display"></label>
+            <div class="dealer-cards">
+                <img id="dimg1" src="PlayingCards/card.png" alt="Card1">
+                <img id="dimg2" src="PlayingCards/card.png" alt="Card2">
+                <img id="dimg3" src="PlayingCards/card.png" alt="Card3">
+                <img id="dimg4" src="PlayingCards/card.png" alt="Card4">
+                <img id="dimg5" src="PlayingCards/card.png" alt="Card5">
+            </div>
+        </div>
 
         <div class="player-bar">
             <div class="action-box">
                 <div class="title">Actions</div>
                 <div class="button-container">
-                    <button>Call</button>
-                    <button>Raise</button>
-                    <button>Fold</button>
+                    <button id="call-button">Call</button>
+                    <button id="raise-button">Raise</button>
+                    <button id="fold-button">Fold</button>
+                </div>
+                <div class="button-container">
+                    <button id="next-round-button">Next Round</button>
+                    <button id="new-game-button">New Game</button>
                 </div>
             </div>
             <div class="hand-box">
                 <div class="title">Hand</div>
                 <div class="hand-images">
-                    <img src="PlayingCards/AC.png" alt="Card1">
-                    <img src="PlayingCards/KS.png" alt="Card2">
+                    <img id="pimg1" src="PlayingCards/card.png" alt="Card1">
+                    <img id="pimg2" src="PlayingCards/card.png" alt="Card2">
                 </div>
             </div>
             <div class="fund-box">
                 <div class="title">Funds</div>
                 <div>
+                    <label id="balance-display"></label>
+                </div>
+                <div>
                     <label for="bet-amount">Bet Amount:</label>
                     <input type="text" id="bet-amount" name="bet-amount">
-                    <button type="submit">Submit</button>
+                    <button id="bet-button" type="submit">Bet</button>
                 </div>
                 <div>
                     <label for="add-funds">Add Funds:</label>
                     <input type="text" id="add-funds" name="add-funds">
-                    <button type="submit">Submit</button>
+                    <button id="add-funds-button" type="submit">Submit</button>
                 </div>
             </div>
         </div>

@@ -6,7 +6,46 @@ body {
 }
 img {
     width: 100px;
-    height: auto;
+    height: 144px; 
+    margin: 0 5px; 
+}
+
+
+.opp-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.opp-box {
+    flex: 1; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center;
+    border: 1px solid white; 
+    background-color: #333;
+    margin-bottom: 30px;
+}
+.opp-box .title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.game-container {
+    text-align: center;
+    margin-bottom: 30px; 
+}
+#gamepot-display {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+.dealer-cards {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+    margin-bottom: 20px; 
 }
 
 .player-bar {
@@ -57,10 +96,11 @@ img {
 }
 
 .hand-images img {
-    width: 100px; 
-    height: auto;
+    width: 100px;
+    height: 144px; 
     margin: 0 5px; 
-    padding-top: 30px; 
+    padding-top: 30px;
+    padding-bottom: 30px; 
 }
 .fund-box {
     flex: 1;
@@ -101,6 +141,15 @@ img {
 .fund-box button:hover {
     background-color: #45a049;
 }
+#add-funds-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+#bet-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+
 .action-box {
     flex: 1;
     display: flex;
@@ -126,7 +175,7 @@ img {
     border: none;
     color: white;
     cursor: pointer;
-    margin-right: 5px;
+    margin: 5px;
 }
 
 .action-box button:last-child {
@@ -135,4 +184,25 @@ img {
 
 .action-box button:hover {
     background-color: #45a049;
+}
+
+#next-round-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+#new-game-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+#call-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+#raise-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
+}
+#fold-button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
 }

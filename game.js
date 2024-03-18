@@ -40,103 +40,77 @@ class Game{
 
     //will determine best hand
     findBestHand(hand, dealer){
-        //let bestHand = 0; // default highcard
         let combinedHand = [...hand, ...dealer]; //combined player hand and dealer hand
         const n = combinedHand.length;
-
-        var bestHand = [];
         var combinations = [];
-        var currentValue = 0;
-
-        //set combinations[] with all possible combos
+    
+        // Generate all possible combinations
         for (let i = 0; i < n - 4; i++) {
             for (let j = i + 1; j < n - 3; j++) {
                 for (let k = j + 1; k < n - 2; k++) {
                     for (let l = k + 1; l < n - 1; l++) {
                         for (let m = l + 1; m < n; m++) {
-                            combinations.push([combinedHand[i], combinedHand[j], combinedHand[k], combinedHand[l], combinedHand[m]]);
+                            const combination = [combinedHand[i], combinedHand[j], combinedHand[k], combinedHand[l], combinedHand[m]];
+                            this.sortCards(combination); // Ensure the combination is sorted
+                            combinations.push(combination);
                         }
                     }
                 }
             }
         }
-        
-        //goes through all combos to determine best hand
+    
+        var bestHand = [];
+        var bestScore = 0; 
+    
+        // Iterate through combinations to determine best hand
         for (const combination of combinations) {
-            console.log(combination);
-            console.log(combination[0]);
-            console.log(combination[1]);
-            console.log(combination[2]);
-            console.log(combination[3]);
-            console.log(combination[4]);
-
-            
-        }
-        var bestHand;
-        var bestScore;
-        var currentScore;
-        for (const combination of combinations) {
-            if (this.isRF(combination) === true) {
-                console.log(this.isRF(combination));
+            let currentScore = 0;
+            if (this.isRF(combination)) {
                 currentScore = 9;
-            }
-            else if (this.isSF(combination) == true) {
+            } else if (this.isSF(combination)) {
                 currentScore = 8;
-            }
-            else if (this.is4OK(combination) == true) {
+            } else if (this.is4OK(combination)) {
                 currentScore = 7;
-            }
-            else if (this.isFH(combination) == true) {
+            } else if (this.isFH(combination)) {
                 currentScore = 6;
-            }
-            else if (this.isF(combination) == true) {
+            } else if (this.isF(combination)) {
                 currentScore = 5;
-            }
-            else if (this.isS(combination) == true) {
-                
+            } else if (this.isS(combination)) {
                 currentScore = 4;
-            }
-            else if (this.is3OK(combination) == true) {
+            } else if (this.is3OK(combination)) {
                 currentScore = 3;
-            }
-            else if (this.is2P(combination) == true) {
+            } else if (this.is2P(combination)) {
                 currentScore = 2;
-            }
-            else if (this.is41P(combination) == true) {
+            } else if (this.is1P(combination)) {
                 currentScore = 1;
             }
-            else{
-
-            }
-
-            if (currentScore > bestScore){
+    
+            if (currentScore > bestScore) {
                 bestScore = currentScore;
                 bestHand = combination;
             }
-            
         }
-
-        return currentScore;
+    
+        return bestScore;
     }
+
 
     ///returns true if hand contains royal flush
     isRF(hand){
-        const allSameSuit = hand.every(card => card.suit === hand[0].suit);
-        if (!allSameSuit) {
-            return false; 
-        }
-        const sortedHand = hand.sort((a, b) => {   //sorts hand
-            const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
-            return ranks.indexOf(a.value) - ranks.indexOf(b.value);
-        });
-        const expectedValues = ['10', 'Jack', 'Queen', 'King', 'Ace'];
-        for (let i = 0; i < 5; i++) {
-            if (sortedHand[i].value !== expectedValues[i]) {
-                return false; 
-            }
-        }
-
-        return true; 
+        const sortedHand = this.sortCards(hand);
+        const isSequentialRank = sortedHand[0].value === 'Ace' &&
+            sortedHand[1].value === '10' &&
+            sortedHand[2].value === 'Jack' &&
+            sortedHand[3].value === 'Queen' &&
+            sortedHand[4].value === 'King';
+    
+        const isSequentialAltRank = sortedHand[0].value === '10' &&
+            sortedHand[1].value === 'Jack' &&
+            sortedHand[2].value === 'Queen' &&
+            sortedHand[3].value === 'King' &&
+            sortedHand[4].value === 'Ace';
+    
+        return (isSequentialRank || isSequentialAltRank) && this.isF(hand); // Also check for flush
     }
     //returns true if hand contains straight flush
     isSF(hand){
@@ -416,15 +390,46 @@ function testGame(){
     //==========================================================
 
     //test findBestHand ========================================
-    console.log("\nTESTING setHandWeights");
-    var h = [{suit: 'Clubs', value: '2'}, {suit: 'Clubs', value: '3'}]
-    var d = [{suit: 'Clubs', value: '4'}, {suit: 'Clubs', value: '5'}, {suit: 'Clubs', value: '6'}, {suit: 'Clubs', value: '7'}, {suit: 'Clubs', value: '8'}]
+    var h = [{suit: 'Clubs', value: '10'}, {suit: 'Clubs', value: 'Jack'}]
+    var d = [{suit: 'Clubs', value: 'Queen'}, {suit: 'Clubs', value: 'King'}, {suit: 'Clubs', value: 'Ace'}]
     var bH = game.findBestHand(h, d);
-    console.log(bH)
-    var h = [{suit: 'Clubs', value: 'Ace'}, {suit: 'Clubs', value: '3'}]
-    var d = [{suit: 'Clubs', value: 'Queen'}, {suit: 'Clubs', value: '10'}, {suit: 'Clubs', value: 'King'}, {suit: 'Clubs', value: 'Jack'}, {suit: 'Clubs', value: '8'}]
+    console.log(bH); // should be 9
+    var h = [{suit: 'Hearts', value: '6'}, {suit: 'Hearts', value: '7'}]
+    var d = [{suit: 'Hearts', value: '8'}, {suit: 'Hearts', value: '9'}, {suit: 'Hearts', value: '10'}]
     var bH = game.findBestHand(h, d);
-    console.log(bH)
+    console.log(bH); // should be 8
+    var h = [{suit: 'Diamonds', value: 'King'}, {suit: 'Hearts', value: 'King'}]
+    var d = [{suit: 'Clubs', value: 'King'}, {suit: 'Spades', value: 'King'}, {suit: 'Hearts', value: '8'}, {suit: 'Diamonds', value: 'Ace'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 7
+    var h = [{suit: 'Clubs', value: '7'}, {suit: 'Hearts', value: '7'}]
+    var d = [{suit: 'Spades', value: '7'}, {suit: 'Hearts', value: '8'}, {suit: 'Diamonds', value: '8'}, {suit: 'Clubs', value: '8'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 6
+    var h = [{suit: 'Spades', value: '2'}, {suit: 'Spades', value: '7'}]
+    var d = [{suit: 'Spades', value: '10'}, {suit: 'Spades', value: 'Jack'}, {suit: 'Spades', value: 'Queen'}, {suit: 'Spades', value: 'Ace'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 5
+    var h = [{suit: 'Hearts', value: '5'}, {suit: 'Clubs', value: '6'}]
+    var d = [{suit: 'Diamonds', value: '7'}, {suit: 'Spades', value: '8'}, {suit: 'Hearts', value: '9'}, {suit: 'Clubs', value: '10'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 4
+    var h = [{suit: 'Diamonds', value: '2'}, {suit: 'Hearts', value: '2'}]
+    var d = [{suit: 'Spades', value: '2'}, {suit: 'Hearts', value: '5'}, {suit: 'Clubs', value: '3'}, {suit: 'Diamonds', value: '4'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 3
+    var h = [{suit: 'Clubs', value: '3'}, {suit: 'Hearts', value: '3'}]
+    var d = [{suit: 'Spades', value: '4'}, {suit: 'Hearts', value: '4'}, {suit: 'Diamonds', value: '5'}, {suit: 'Clubs', value: '5'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 2
+    var h = [{suit: 'Clubs', value: 'Ace'}, {suit: 'Hearts', value: 'Ace'}]
+    var d = [{suit: 'Spades', value: 'King'}, {suit: 'Hearts', value: '4'}, {suit: 'Diamonds', value: 'Queen'}, {suit: 'Clubs', value: '7'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 1
+    var h = [{suit: 'Clubs', value: 'Ace'}, {suit: 'Hearts', value: '2'}]
+    var d = [{suit: 'Spades', value: '3'}, {suit: 'Hearts', value: '4'}, {suit: 'Diamonds', value: '5'}, {suit: 'Clubs', value: '7'}]
+    var bH = game.findBestHand(h, d);
+    console.log(bH); // should be 0
     //==========================================================
 }
 
