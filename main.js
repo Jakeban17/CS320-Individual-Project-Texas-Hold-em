@@ -44,6 +44,7 @@ class Deck {
 class Player{
     static balance = 0;
     static hand = [];
+    static handWeight =[];
     
     //Player balance modifications
     static addFunds(amount) {
@@ -71,6 +72,7 @@ class CPU {
     constructor() {
         this.balance = 0;
         this.hand = [];
+        this.handWeight = [];
     }
     
     //CPU balance modifications
@@ -133,6 +135,265 @@ class DisplayCard {
         }
     }
 }
+
+class Game{
+    static h
+    andOpts = {
+        0: "High Card",
+        1: "One Pair",
+        2: "Two Pair",
+        3: "Three of a Kind",
+        4: "Straight",
+        5: "Flush",
+        6: "Full House",
+        7: "Four of a Kind",
+        8: "Straight Flush",
+        9: "Royal Flush"
+    };
+
+    constructor(){
+        this.cardWeight = [];
+        this.handOptions = [];
+        this.cardValues = {
+            '2': 2, 
+            '3': 3, 
+            '4': 4, 
+            '5': 5, 
+            '6': 6, 
+            '7': 7, 
+            '8': 8, 
+            '9': 9, 
+            '10': 10, 
+            'Jack': 11, 
+            'Queen': 12, 
+            'King': 13, 
+            'Ace': 14
+        }
+    }
+
+    //compares hands to determine round winner
+    compareHands(hand1, hand2, hand3, hand4){
+
+    }
+
+    //will determine best hand
+    static findBestHand(hand, dealer){
+        let combinedHand = [...hand, ...dealer]; //combined player hand and dealer hand
+        const n = combinedHand.length;
+        var combinations = [];
+    
+        // Generate all possible combinations
+        for (let i = 0; i < n - 4; i++) {
+            for (let j = i + 1; j < n - 3; j++) {
+                for (let k = j + 1; k < n - 2; k++) {
+                    for (let l = k + 1; l < n - 1; l++) {
+                        for (let m = l + 1; m < n; m++) {
+                            const combination = [combinedHand[i], combinedHand[j], combinedHand[k], combinedHand[l], combinedHand[m]];
+                            Game.sortCards(combination);
+                            combinations.push(combination);
+                        }
+                    }
+                }
+            }
+        }
+    
+        var bestHand = [];
+        var bestScore = 0; 
+    
+        // Iterate through combinations to determine best hand
+        for (const combination of combinations) {
+            let currentScore = 0;
+            if (this.isRF(combination)) {
+                currentScore = 9;
+            } else if (this.isSF(combination)) {
+                currentScore = 8;
+            } else if (this.is4OK(combination)) {
+                currentScore = 7;
+            } else if (this.isFH(combination)) {
+                currentScore = 6;
+            } else if (this.isF(combination)) {
+                currentScore = 5;
+            } else if (this.isS(combination)) {
+                currentScore = 4;
+            } else if (this.is3OK(combination)) {
+                currentScore = 3;
+            } else if (this.is2P(combination)) {
+                currentScore = 2;
+            } else if (this.is1P(combination)) {
+                currentScore = 1;
+            }
+    
+            if (currentScore > bestScore) {
+                bestScore = currentScore;
+                bestHand = combination;
+            }
+        }
+    
+        return bestScore;
+    }
+
+
+    ///returns true if hand contains royal flush
+    static isRF(hand){
+        const sortedHand = this.sortCards(hand);
+        const isSequentialRank = sortedHand[0].value === 'Ace' &&
+            sortedHand[1].value === '10' &&
+            sortedHand[2].value === 'Jack' &&
+            sortedHand[3].value === 'Queen' &&
+            sortedHand[4].value === 'King';
+    
+        const isSequentialAltRank = sortedHand[0].value === '10' &&
+            sortedHand[1].value === 'Jack' &&
+            sortedHand[2].value === 'Queen' &&
+            sortedHand[3].value === 'King' &&
+            sortedHand[4].value === 'Ace';
+    
+        return (isSequentialRank || isSequentialAltRank) && this.isF(hand); // Also check for flush
+    }
+    //returns true if hand contains straight flush
+    static isSF(hand){
+        if (this.isS(hand) && this.isF(hand)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    //returns true if hand contains 4 of a kind
+    static is4OK(hand){
+        const cardCounts = {};
+        for (const card of hand) {
+            const rank = card.value; 
+            cardCounts[rank] = (cardCounts[rank] || 0) + 1;   //counts occurance of each rank, assigns to cardCounts[rank]
+        }
+        for (const rank of Object.keys(cardCounts)) {
+            if (cardCounts[rank] === 4) {   //checks for 4 of the same rank
+                return true;
+            }
+        }
+        return false;
+    }
+    //returns true if hand contains full house
+    static isFH(hand){
+        return this.is3OK(hand) && this.is1P(hand);   //calls 3OK and 1P, if it has both then true
+    }
+    //returns true if hand contains flush
+    static isF(hand){
+        const firstSuit = hand[0].suit;
+        for (let i = 0; i < 5; i++) {
+            if (hand[i].suit != firstSuit) {
+                return false;
+            }
+        }
+        return true;
+    }
+    //returns true if hand contains straight
+    static isS(hand){
+        const sortedHand = this.sortCards(hand);
+        for (let i = 0; i < 4; i++) {
+            if (sortedHand[i + 1].value - sortedHand[i].value !== 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    //returns true if hand contains 3 of a kind
+    static is3OK(hand){
+        const cardCounts = {};
+        for (const card of hand) {
+            const rank = card.value; 
+            cardCounts[rank] = (cardCounts[rank] || 0) + 1;   //counts occurance of each rank, assigns to cardCounts[rank]
+        }
+        for (const rank of Object.keys(cardCounts)) {
+            if (cardCounts[rank] === 3) {   //checks for 3 of the same rank
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    //returns true if hand contains 2 pair
+    static is2P(hand){
+        const cardCounts = {};
+        for (const card of hand) {
+            const rank = card.value;
+            cardCounts[rank] = (cardCounts[rank] || 0) + 1; //counts occurance of each rank, assigns to cardCounts[rank]
+        }
+        let pairCount = 0;
+        for (const rank of Object.keys(cardCounts)) {
+            if (cardCounts[rank] === 2) {   //checks for 2 of the same rank
+                pairCount++;
+            }
+        }
+        return pairCount === 2;   //if pairCount = 2, return true, else false
+    }
+
+    //returns true if hand contains 1 pair
+    static is1P(hand){
+        const cardCounts = {};
+        for (const card of hand) {
+            const rank = card.value;
+            cardCounts[rank] = (cardCounts[rank] || 0) + 1; //counts occurance of each rank, assigns to cardCounts[rank]
+        }
+        for (const rank of Object.keys(cardCounts)) {
+            if (cardCounts[rank] === 2) {    //checks for 2 of the same rank
+                return true;
+            }
+        }
+        return false; 
+    }
+    //returns high card value
+    static isHC(hand){
+        const cardValues = this.getHandWeights(hand);
+        return Math.max(...cardValues);
+    }
+
+    //if two players happen to have the same hand, the hand with the highest input values will win
+    static ifHandSame(){
+
+    }
+
+    //aid hand finding logic, returns array of the values of the hand (for comparison)
+    static getHandWeights(hand){
+        var handValues = [];
+        for (const card of hand) {
+            const valueIndex = this.cardValues[card.value];
+            if (valueIndex !== undefined) {
+                handValues.push(valueIndex);
+            }
+            else{
+                console.log(`Value "${card.value}" not found in dictionary.`);
+            }
+        }
+        return handValues;
+    }
+
+    //add other methods, sorts cards
+    static sortCards(cards) {
+        return cards.sort((a, b) => {
+            const cardValues = {
+                '2': 2,
+                '3': 3,
+                '4': 4,
+                '5': 5,
+                '6': 6,
+                '7': 7,
+                '8': 8,
+                '9': 9,
+                '10': 10,
+                'Jack': 11,
+                'Queen': 12,
+                'King': 13,
+                'Ace': 14
+            };
+            return cardValues[a.value] - cardValues[b.value];
+        });
+    }
+
+}
+
 
 let roundCount = 1;
 var gameCount = 1;
@@ -358,6 +619,41 @@ async function main() {
         nextRoundButton.disabled = true; //disables next round button
         newGameButton.disabled = false; //enables next round button
 
+        
+        const playerHandWeight = Game.findBestHand(Player.hand, dealerHand);
+        const cpu1HandWeight = Game.findBestHand(CPU1.hand, dealerHand);
+        const cpu2HandWeight = Game.findBestHand(CPU2.hand, dealerHand);
+        const cpu3HandWeight = Game.findBestHand(CPU3.hand, dealerHand);
+        const cpu4HandWeight = Game.findBestHand(CPU4.hand, dealerHand);
+        console.log(playerHandWeight, cpu1HandWeight, cpu2HandWeight, cpu3HandWeight, cpu4HandWeight)
+
+        // Check if any of the hand weights are undefined
+        if (
+            playerHandWeight !== undefined &&
+            cpu1HandWeight !== undefined &&
+            cpu2HandWeight !== undefined &&
+            cpu3HandWeight !== undefined &&
+            cpu4HandWeight !== undefined
+        ) {
+            const maxHandWeight = Math.max(playerHandWeight, cpu1HandWeight, cpu2HandWeight, cpu3HandWeight, cpu4HandWeight);
+            
+            let winner;
+            if (playerHandWeight === maxHandWeight) {
+                winner = "Player";
+            } else if (cpu1HandWeight === maxHandWeight) {
+                winner = "CPU 1";
+            } else if (cpu2HandWeight === maxHandWeight) {
+                winner = "CPU 2";
+            } else if (cpu3HandWeight === maxHandWeight) {
+                winner = "CPU 3";
+            } else {
+                winner = "CPU 4";
+            }
+            console.log("Winner:", winner);
+        } else {
+            console.log("Error: One or more hand weights are undefined.");
+        }
+        
         //display opp cards
         const c1c1 = document.getElementById('c1c1');
         const c1c2 = document.getElementById('c1c2');
