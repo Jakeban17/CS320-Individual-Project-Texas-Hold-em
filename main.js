@@ -45,6 +45,10 @@ class Player{
     static balance = 0;
     static hand = [];
     static handWeight =[];
+    static currentBet = 0;
+    static lastBet = 0;
+    static totalBet = 0;
+    static isFolded = false;
     
     //Player balance modifications
     static addFunds(amount) {
@@ -73,6 +77,11 @@ class CPU {
         this.balance = 0;
         this.hand = [];
         this.handWeight = [];
+        this.currentBet = 0;
+        this.lastBet = 0;
+        this.isFolded = false;
+        this.totalBet = 0;
+        this.action = " ";
     }
     
     //CPU balance modifications
@@ -151,10 +160,28 @@ class Game{
         9: "Royal Flush"
     };
 
+    static cardValues = {
+        '2': 2, 
+        '3': 3, 
+        '4': 4, 
+        '5': 5, 
+        '6': 6, 
+        '7': 7, 
+        '8': 8, 
+        '9': 9, 
+        '10': 10, 
+        'Jack': 11, 
+        'Queen': 12, 
+        'King': 13, 
+        'Ace': 14
+    }
+
     constructor(){
         this.cardWeight = [];
         this.handOptions = [];
-        this.cardValues = {
+    }
+    static getLargestCardValue(cards) {
+        const cardValues = {
             '2': 2, 
             '3': 3, 
             '4': 4, 
@@ -168,7 +195,17 @@ class Game{
             'Queen': 12, 
             'King': 13, 
             'Ace': 14
+        };
+    
+        let largestValue = 0;
+        for (const card of cards) {
+            const cardValue = cardValues[card.value];
+            if (typeof cardValue === 'number' && cardValue > largestValue) {
+                largestValue = cardValue;
+            }
         }
+    
+        return largestValue;
     }
 
     //compares hands to determine round winner
@@ -222,15 +259,20 @@ class Game{
             } else if (this.is1P(combination)) {
                 currentScore = 1;
             }
+            
     
             if (currentScore > bestScore) {
                 bestScore = currentScore;
                 bestHand = combination;
             }
         }
-    
-        return bestScore;
+        if (bestScore == 0){
+            bestHand = combinedHand;
+        }
+        
+        return [bestScore, bestHand];
     }
+    
 
 
     ///returns true if hand contains royal flush
@@ -357,8 +399,11 @@ class Game{
 
     //aid hand finding logic, returns array of the values of the hand (for comparison)
     static getHandWeights(hand){
+        console.log("Hand", hand);
         var handValues = [];
-        for (const card of hand) {
+        for (let i = 0; i < 5; i++) {
+            const card = hand[i];
+            console.log("Card:", card);
             const valueIndex = this.cardValues[card.value];
             if (valueIndex !== undefined) {
                 handValues.push(valueIndex);
@@ -395,14 +440,23 @@ class Game{
 }
 
 
-let roundCount = 1;
-var gameCount = 1;
-var gamePot = 0;
-let isFolded = false;
+let roundCount = 1; //keeps track of current round number, for round logic
+var gameCount = 1; //keeps track of current game number
+var gamePot = 0; //total of all of the bets
+let isFolded = false; //only for enabling/disabling buttons, Player has its own isFolded
+var raiseAmount = 100; //100 being default, can be changed with user input
+var previousBet = 0; //stores previous bet
+var round = "Pre Flop";
 
 //process call button ========================================================
 let callClicked = false;
 function handleCallClick() {
+    gamePot = gamePot + previousBet;
+    document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+    Player.deductFunds(previousBet);
+    document.getElementById("balance-display").textContent = "Balance: " + Player.balance;
+    Player.currentBet += previousBet;
+    document.getElementById("player-current-bet").textContent = Player.currentBet;
     console.log("UPDATE: Call button clicked");
     nextRoundClicked = true;
 }
@@ -412,8 +466,15 @@ callButton.addEventListener("click", handleCallClick);
 //process raise button =======================================================
 let raiseClicked = false;
 function handleRaiseClick() {
+    gamePot = gamePot + raiseAmount;
+    document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+    Player.deductFunds(raiseAmount);
+    document.getElementById("balance-display").textContent = "Balance: " + Player.balance;
+    Player.currentBet += raiseAmount;
+    document.getElementById("player-current-bet").textContent = Player.currentBet;
     console.log("UPDATE: Raise button clicked");
     raiseClicked = true;
+    disableActions();
 }
 const raiseButton = document.getElementById("raise-button");
 raiseButton.addEventListener("click", handleRaiseClick);
@@ -423,6 +484,7 @@ let foldClicked = false;
 function handleFoldClick() {
     console.log("UPDATE: Fold button clicked");
     foldClicked = true;
+    Player.isFolded = true;
     disableActions();
     isFolded = true;
 }
@@ -498,13 +560,40 @@ betButton.addEventListener("click", function() {
         if (betAmount > 0  && !isNaN(betAmount)){
             gamePot += betAmount;
             Player.deductFunds(betAmount);
+            Player.currentBet +=betAmount;
+            previousBet = betAmount;
             disableActions();
         }
     
         document.getElementById("balance-display").textContent = "Balance: " + Player.balance;
         document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+        document.getElementById('player-current-bet').textContent = Player.currentBet;
     
         betAmountInput.value = "";
+    }
+    else{
+
+    }
+
+   
+});
+//===========================================================================
+// process set raise ========================================================
+const setRaiseButton = document.getElementById("set-raise-button");
+setRaiseButton.addEventListener("click", function() {
+    if (roundCount == 1){
+        const setRaiseInput = document.getElementById("set-raise");
+        const setRaise = parseFloat(setRaiseInput.value);
+
+        if (setRaise > 0 && !isNaN(setRaise)){
+            raiseAmount = setRaise;
+            document.getElementById('raise-amount').textContent = 'Raise Amount: ' + raiseAmount;
+        }
+        //change this to show new raise amount in the corner of the screen
+        //document.getElementById("balance-display").textContent = "Balance: " + Player.balance;
+    
+        setRaiseInput.value = "";
+        console.log("UPDATE: New raise amount ", raiseAmount);
     }
     else{
 
@@ -526,6 +615,86 @@ function disableActions(){
     foldButton.disabled = true; //disables fold button
     betButton.disabled = true; //disable fold button
 }
+function updateWinnerDisplay(winner) {
+    const winnerDisplay = document.getElementById('winner-display');
+    winnerDisplay.textContent = winner ? `Winner: ${winner}` : '';
+}
+function resetWinnerDisplay() {
+    const winnerDisplay = document.getElementById('winner-display');
+    winnerDisplay.textContent = '';
+}
+//processes CPU moves
+function cpuNextMove(player, dealerHand, previousBet, name, random) {
+    if (!player.isFolded){
+        var currentHandWeight = Game.findBestHand(player.hand, dealerHand);
+        if (currentHandWeight[0] >= 5 || roundCount == 1 || (random == 1 || random == 2)){ //if hand is flush or better OR is the first round
+            //raise
+            gamePot += raiseAmount;
+            player.totalBet += raiseAmount;
+            previousBet = raiseAmount;
+            player.action = "Raise";
+            console.log(name, "Raised");
+            document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+        }
+        else if ((currentHandWeight[0] < 1 || random == 3) && roundCount < 4){ //if hand is one pair or worse
+            //fold
+            player.isFolded = true;
+            player.action = "Fold";
+            console.log(name, "Folded");
+        }
+        else{ //if hand is between 2 pair and straight
+            //call
+            if (player.lastBet < previousBet){
+                gamePot += (previousBet - player.lastBet);
+                player.totalBet += (previousBet - player.lastBet);
+                previousBet = (previousBet - player.lastBet);
+                player.action = "Call";
+                document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+                console.log(name,"Called");
+            }
+            else{
+
+            }
+        }
+    }
+}
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+function findHand(handVal){
+    if (handVal == 9){
+        return "Royal Flush";
+    }
+    else if (handVal == 8){
+        return "Straight Flush";
+    }
+    else if (handVal == 7){
+        return "Four of a Kind";
+    }
+    else if (handVal == 6){
+        return "Full House";
+    }
+    else if (handVal == 5){
+        return "Flush";
+    }
+    else if (handVal == 4){
+        return "Straight";
+    }
+    else if (handVal == 3){
+        return "Three of a Kind";
+    }
+    else if (handVal == 2){
+        return "Two Pair";
+    }
+    else if (handVal == 1){
+        return "One Pair";
+    }
+    else{
+        return "High Card";
+    }
+}
 
 async function main() {
     var dealerHand = [];
@@ -533,9 +702,16 @@ async function main() {
     addFundsButton.disabled = false; //enables add funds button
     nextRoundButton.disabled = false; //enables next round button
     newGameButton.disabled = false; //enable call, raise, fold
+    newGameButton.disabled = true; //disables next round button
+    
     enableActions();
 
     while(true){
+        callButton.disabled = true; //disables call button
+        document.getElementById('game-number').textContent = 'Game #: ' + gameCount;
+        document.getElementById('raise-amount').textContent = 'Raise Amount: ' + raiseAmount;
+        document.getElementById("round-name").textContent = "Round: Pre Flop";
+
         Deck.createDeck();
         Deck.shuffle();
 
@@ -560,6 +736,11 @@ async function main() {
 
         document.getElementById("balance-display").textContent = "Balance: " + Player.balance;
         document.getElementById("gamepot-display").textContent = "Game Pot: " + gamePot;
+        document.getElementById('player-current-bet').textContent = Player.currentBet;
+        document.getElementById('cpu1-current-bet').textContent = CPU1.currentBet;
+        document.getElementById('cpu2-current-bet').textContent = CPU2.currentBet;
+        document.getElementById('cpu3-current-bet').textContent = CPU3.currentBet;
+        document.getElementById('cpu4-current-bet').textContent = CPU4.currentBet;
             
         console.log("D:",dealerHand[0]);
         console.log("D:",dealerHand[1]);
@@ -570,12 +751,28 @@ async function main() {
 
         //round 1... Flop shown =======================================================================
         await waitForNextRoundClick();
+        cpuNextMove(CPU1, dealerHand, previousBet, "CPU1", getRandomInt(1, 3));
+        cpuNextMove(CPU2, dealerHand, previousBet, "CPU2", getRandomInt(1, 3));
+        cpuNextMove(CPU3, dealerHand, previousBet, "CPU3", getRandomInt(1, 3));
+        cpuNextMove(CPU4, dealerHand, previousBet, "CPU4", getRandomInt(1, 3));
+        document.getElementById("cpu1-move").textContent = CPU1.action;
+        document.getElementById("cpu2-move").textContent = CPU2.action;
+        document.getElementById("cpu3-move").textContent = CPU3.action;
+        document.getElementById("cpu4-move").textContent = CPU4.action;
+        document.getElementById("round-name").textContent = "Round: Flop";
+        
         nextRoundClicked = false;
         if (!isFolded){
             enableActions(); //enable call, raise, fold
         }
         addFundsButton.disabled = true; //disables add funds button
+        setRaiseButton.disabled = true; //disables set raise button
         roundCount++;
+        document.getElementById('player-current-bet').textContent = Player.currentBet;
+        document.getElementById('cpu1-current-bet').textContent = CPU1.totalBet;
+        document.getElementById('cpu2-current-bet').textContent = CPU2.totalBet;
+        document.getElementById('cpu3-current-bet').textContent = CPU3.totalBet;
+        document.getElementById('cpu4-current-bet').textContent = CPU4.totalBet;
 
         const dimg1 = document.getElementById('dimg1');
         const dimg2 = document.getElementById('dimg2');
@@ -586,8 +783,22 @@ async function main() {
     
         //round 2... draws Trun =====================================================================
         await waitForNextRoundClick();
-        nextRoundClicked = false;
         roundCount++;
+        nextRoundClicked = false;
+        cpuNextMove(CPU1, dealerHand, previousBet, "CPU1", getRandomInt(1, 6));
+        cpuNextMove(CPU2, dealerHand, previousBet, "CPU2", getRandomInt(1, 6));
+        cpuNextMove(CPU3, dealerHand, previousBet, "CPU3", getRandomInt(1, 6));
+        cpuNextMove(CPU4, dealerHand, previousBet, "CPU4", getRandomInt(1, 6));
+        document.getElementById("cpu1-move").textContent = CPU1.action;
+        document.getElementById("cpu2-move").textContent = CPU2.action;
+        document.getElementById("cpu3-move").textContent = CPU3.action;
+        document.getElementById("cpu4-move").textContent = CPU4.action;
+        document.getElementById('player-current-bet').textContent = Player.currentBet;
+        document.getElementById('cpu1-current-bet').textContent = CPU1.totalBet;
+        document.getElementById('cpu2-current-bet').textContent = CPU2.totalBet;
+        document.getElementById('cpu3-current-bet').textContent = CPU3.totalBet;
+        document.getElementById('cpu4-current-bet').textContent = CPU4.totalBet;
+        document.getElementById("round-name").textContent = "Round: Turn";
 
         if (!isFolded){
             enableActions(); //enable call, raise, fold
@@ -602,6 +813,20 @@ async function main() {
         await waitForNextRoundClick();
         nextRoundClicked = false;
         roundCount++;
+        cpuNextMove(CPU1, dealerHand, previousBet, "CPU1", getRandomInt(1, 9));
+        cpuNextMove(CPU2, dealerHand, previousBet, "CPU2", getRandomInt(1, 9));
+        cpuNextMove(CPU3, dealerHand, previousBet, "CPU3", getRandomInt(1, 9));
+        cpuNextMove(CPU4, dealerHand, previousBet, "CPU4", getRandomInt(1, 9));
+        document.getElementById("cpu1-move").textContent = CPU1.action;
+        document.getElementById("cpu2-move").textContent = CPU2.action;
+        document.getElementById("cpu3-move").textContent = CPU3.action;
+        document.getElementById("cpu4-move").textContent = CPU4.action;
+        document.getElementById('player-current-bet').textContent = Player.currentBet;
+        document.getElementById('cpu1-current-bet').textContent = CPU1.totalBet;
+        document.getElementById('cpu2-current-bet').textContent = CPU2.totalBet;
+        document.getElementById('cpu3-current-bet').textContent = CPU3.totalBet;
+        document.getElementById('cpu4-current-bet').textContent = CPU4.totalBet;
+        document.getElementById("round-name").textContent = "Round:  River";
         if (!isFolded){
             enableActions(); //enable call, raise, fold
         }
@@ -615,6 +840,16 @@ async function main() {
         await waitForNextRoundClick();
         nextRoundClicked = false;
         roundCount++;
+        console.log("ROUND NUMBER", roundCount);
+        cpuNextMove(CPU1, dealerHand, previousBet, "CPU1", getRandomInt(1, 12));
+        cpuNextMove(CPU2, dealerHand, previousBet, "CPU2", getRandomInt(1, 12));
+        cpuNextMove(CPU3, dealerHand, previousBet, "CPU3", getRandomInt(1, 12));
+        cpuNextMove(CPU4, dealerHand, previousBet, "CPU4", getRandomInt(1, 12));
+        document.getElementById("cpu1-move").textContent = CPU1.action;
+        document.getElementById("cpu2-move").textContent = CPU2.action;
+        document.getElementById("cpu3-move").textContent = CPU3.action;
+        document.getElementById("cpu4-move").textContent = CPU4.action;
+        document.getElementById("round-name").textContent = "Round: Winner";
         disableActions(); //diable call, raise, fold
         nextRoundButton.disabled = true; //disables next round button
         newGameButton.disabled = false; //enables next round button
@@ -626,8 +861,16 @@ async function main() {
         const cpu3HandWeight = Game.findBestHand(CPU3.hand, dealerHand);
         const cpu4HandWeight = Game.findBestHand(CPU4.hand, dealerHand);
         console.log(playerHandWeight, cpu1HandWeight, cpu2HandWeight, cpu3HandWeight, cpu4HandWeight)
+        playerHandWeight[2] = Game.getLargestCardValue(playerHandWeight[1]);
+        cpu1HandWeight[2] = Game.getLargestCardValue(cpu1HandWeight[1]);
+        cpu2HandWeight[2] = Game.getLargestCardValue(cpu2HandWeight[1]);
+        cpu3HandWeight[2] = Game.getLargestCardValue(cpu3HandWeight[1]);
+        cpu4HandWeight[2] = Game.getLargestCardValue(cpu4HandWeight[1]);
+        console.log(playerHandWeight[0], cpu1HandWeight[0], cpu2HandWeight[0], cpu3HandWeight[0], cpu4HandWeight[0]);
+        console.log(playerHandWeight[2], cpu1HandWeight[2], cpu2HandWeight[2], cpu3HandWeight[2], cpu4HandWeight[2]);
+        console.log(Player.isFolded);
 
-        // Check if any of the hand weights are undefined
+        // Determine the winner
         if (
             playerHandWeight !== undefined &&
             cpu1HandWeight !== undefined &&
@@ -635,24 +878,79 @@ async function main() {
             cpu3HandWeight !== undefined &&
             cpu4HandWeight !== undefined
         ) {
-            const maxHandWeight = Math.max(playerHandWeight, cpu1HandWeight, cpu2HandWeight, cpu3HandWeight, cpu4HandWeight);
-            
-            let winner;
-            if (playerHandWeight === maxHandWeight) {
-                winner = "Player";
-            } else if (cpu1HandWeight === maxHandWeight) {
-                winner = "CPU 1";
-            } else if (cpu2HandWeight === maxHandWeight) {
-                winner = "CPU 2";
-            } else if (cpu3HandWeight === maxHandWeight) {
-                winner = "CPU 3";
+            // Filter out folded players
+            const unfoldedPlayers = [
+                ["Player", playerHandWeight, Player.isFolded],
+                ["Sephen (CPU)", cpu1HandWeight, CPU1.isFolded],
+                ["Trisha (CPU)", cpu2HandWeight, CPU2.isFolded],
+                ["Oden (CPU)", cpu3HandWeight, CPU3.isFolded],
+                ["Penelope (CPU)", cpu4HandWeight, CPU4.isFolded]
+            ].filter(player => !player[2]);
+
+            if (unfoldedPlayers.length > 0) {
+                // Find the maximum hand weight among all unfolded players
+                const maxHandWeight = Math.max(
+                    ...unfoldedPlayers.map(player => player[1][0])
+                );
+
+                let winner;
+                let winningHandType;
+
+                // Check if there's a single winner based on hand weight
+                const potentialWinners = unfoldedPlayers.filter(
+                    player => player[1][0] === maxHandWeight
+                );
+
+                if (potentialWinners.length === 1) {
+                    winner = potentialWinners[0][0];
+                    winningHandType = findHand(potentialWinners[0][1][0]);
+                } else if (potentialWinners.length > 1) {
+                    // Compare largest values if there are multiple potential winners
+                    let maxLargestValue = -Infinity;
+                    let winningPlayer = null;
+
+                    for (const [playerName, handWeight] of potentialWinners) {
+                        if (handWeight[2] > maxLargestValue) {
+                            maxLargestValue = handWeight[2];
+                            winningPlayer = playerName;
+                            winningHandType = findHand(handWeight[0]);
+                        } else if (handWeight[2] === maxLargestValue) {
+                            // Handle tie by comparing second largest value
+                            if (
+                                handWeight[1] >
+                                potentialWinners.find(player => player[0] === winningPlayer)[1][1]
+                            ) {
+                                winningPlayer = playerName;
+                                winningHandType = findHand(handWeight[0]);
+                            }
+                        }
+                    }
+
+                    winner = winningPlayer;
+                }
+
+                if (winner === "Player") {
+                    Player.addFunds(gamePot);
+                    gamePot = 0;
+                    console.log("ADDED PLAYER FUNDS");
+                }
+                console.log("Winner:", winner, " with ", winningHandType);
+                winner = winner + " with " + winningHandType;
+                const winnerDisplay = document.getElementById('winner-display');
+                updateWinnerDisplay(winner);
             } else {
-                winner = "CPU 4";
+                console.log("No active players remaining.");
             }
-            console.log("Winner:", winner);
         } else {
             console.log("Error: One or more hand weights are undefined.");
         }
+
+
+        Player.currentBet = 0;
+        CPU1.currentBet = 0;
+        CPU2.currentBet = 0;
+        CPU3.currentBet = 0;
+        CPU4.currentBet = 0;
         
         //display opp cards
         const c1c1 = document.getElementById('c1c1');
@@ -679,6 +977,11 @@ async function main() {
         Deck.resetDeck();
         dealerHand = [];
         gamePot = 0;
+        Player.totalBet = 0;
+        CPU1.totalBet = 0;
+        CPU2.totalBet = 0;
+        CPU3.totalBet = 0;
+        CPU4.totalBet = 0;
         dimg1.src = "PlayingCards/card.png";
         dimg2.src = "PlayingCards/card.png";
         dimg3.src = "PlayingCards/card.png";
@@ -694,9 +997,25 @@ async function main() {
         c4c2.src = "PlayingCards/card.png";;
     
         addFundsButton.disabled = false; //enables add funds button
+        setRaiseButton.disabled = false; //enables set raise button
         nextRoundButton.disabled = false; //enables next round button
-        enableActions(); //enable call, raise, fold
         newGameButton.disabled = true; //disables next round button
+        enableActions(); //enable call, raise, fold
+        resetWinnerDisplay(); //resets winner
+        Player.isFolded = false;
+        CPU1.isFolded = false;
+        CPU2.isFolded = false;
+        CPU3.isFolded = false;
+        CPU4.isFolded = false;
+        CPU1.action = " ";
+        CPU2.action = " ";
+        CPU3.action = " ";
+        CPU4.action = " ";
+        document.getElementById("cpu1-move").textContent = CPU1.action;
+        document.getElementById("cpu2-move").textContent = CPU2.action;
+        document.getElementById("cpu3-move").textContent = CPU3.action;
+        document.getElementById("cpu4-move").textContent = CPU4.action;
+        document.getElementById("round-name").textContent = "Round: Pre Flop";
         roundCount = 1;
         gameCount++;
     }

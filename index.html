@@ -10,35 +10,57 @@
         <div class="opp-container">
             <div class="opp-box">
                 <div class="title">Stephen (CPU)</div>
+                <div class="text-style current-bet">Current Bet: <span id="cpu1-current-bet"></span></div>
                 <div class="hand-images">
                     <img id="c1c1" src="PlayingCards/card.png" alt="Card1">
                     <img id="c1c2" src="PlayingCards/card.png" alt="Card2">
                 </div>
+                <div class="cpu-move text-style"><span id="cpu1-move"></span></div>
             </div>
             <div class="opp-box">
                 <div class="title">Trisha (CPU)</div>
+                <div class="text-style current-bet">Current Bet: <span id="cpu2-current-bet"></span></div>
                 <div class="hand-images">
                     <img id="c2c1" src="PlayingCards/card.png" alt="Card1">
                     <img id="c2c2" src="PlayingCards/card.png" alt="Card2">
                 </div>
+                <div class="cpu-move text-style"><span id="cpu2-move"></span></div>
             </div>
             <div class="opp-box">
                 <div class="title">Oden (CPU)</div>
+                <div class="text-style current-bet">Current Bet: <span id="cpu3-current-bet"></span></div>
                 <div class="hand-images">
                     <img id="c3c1" src="PlayingCards/card.png" alt="Card1">
                     <img id="c3c2" src="PlayingCards/card.png" alt="Card2">
                 </div>
+                <div class="cpu-move text-style"><span id="cpu3-move"></span></div>
             </div>
             <div class="opp-box">
                 <div class="title">Penelope (CPU)</div>
+                <div class="text-style current-bet">Current Bet: <span id="cpu4-current-bet"></span></div>
                 <div class="hand-images">
                     <img id="c4c1" src="PlayingCards/card.png" alt="Card1">
                     <img id="c4c2" src="PlayingCards/card.png" alt="Card2">
                 </div>
+                <div class="cpu-move text-style"><span id="cpu4-move"></span></div>
             </div>
-        </div>
+        </div>/
 
+        
         <div class="game-container">
+            <div>
+                <div class="game-info">
+                    <div>
+                        <span id="game-number">Game #:</span>
+                    </div>
+                    <div>
+                        <span id="raise-amount">Raise Amount:</span>
+                    </div>
+                    <div>
+                        <span id="round-name">Round:</span>
+                    </div>
+                </div>
+            </div>
             <label id="gamepot-display"></label>
             <div class="dealer-cards">
                 <img id="dimg1" src="PlayingCards/card.png" alt="Card1">
@@ -46,6 +68,8 @@
                 <img id="dimg3" src="PlayingCards/card.png" alt="Card3">
                 <img id="dimg4" src="PlayingCards/card.png" alt="Card4">
                 <img id="dimg5" src="PlayingCards/card.png" alt="Card5">
+            </div>
+            <div class="winner-display" id="winner-display">
             </div>
         </div>
 
@@ -71,6 +95,7 @@
             </div>
             <div class="fund-box">
                 <div class="title">Funds</div>
+                <div class="current-bet">Current Bet: <span id="player-current-bet"></span></div>
                 <div>
                     <label id="balance-display"></label>
                 </div>
@@ -80,9 +105,14 @@
                     <button id="bet-button" type="submit">Bet</button>
                 </div>
                 <div>
-                    <label for="add-funds">Add Funds:</label>
+                    <label for="add-funds"> Add Funds:</label>
                     <input type="text" id="add-funds" name="add-funds">
                     <button id="add-funds-button" type="submit">Submit</button>
+                </div>
+                <div>
+                    <label for="set-raise"> Set Raise:</label>
+                    <input type="text" id="set-raise" name="set-raise">
+                    <button id="set-raise-button" type="submit">Submit</button>
                 </div>
             </div>
         </div>

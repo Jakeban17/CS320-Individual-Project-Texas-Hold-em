@@ -4,12 +4,12 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
 }
+
 img {
     width: 100px;
     height: 144px; 
     margin: 0 5px; 
 }
-
 
 .opp-container {
     display: flex;
@@ -25,7 +25,10 @@ img {
     border: 1px solid white; 
     background-color: #333;
     margin-bottom: 30px;
+    padding: 15px;
+    border-radius: 5px;
 }
+
 .opp-box .title {
     color: white;
     font-size: 20px;
@@ -36,11 +39,13 @@ img {
     text-align: center;
     margin-bottom: 30px; 
 }
+
 #gamepot-display {
     color: white;
     font-size: 20px;
     margin-bottom: 30px;
 }
+
 .dealer-cards {
     display: flex;
     justify-content: center;
@@ -58,22 +63,7 @@ img {
     color: white;
     display: flex;
 }
-.player-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-.player-text {
-    color: white;
-    margin-bottom: 10px;
-}
-.player-name {
-    text-align: center;
-    padding: 10px 0;
-    background-color: #333;
-}
+
 .action-box,
 .hand-box,
 .fund-box {
@@ -82,8 +72,11 @@ img {
     flex-direction: column; 
     justify-content: flex-start; 
     align-items: center;
-    border: 1px solid white; 
+    border: 1px solid white;
+    padding: 15px;
+    border-radius: 5px;
 }
+
 .hand-box .title {
     color: white;
     font-size: 20px;
@@ -102,32 +95,33 @@ img {
     padding-top: 30px;
     padding-bottom: 30px; 
 }
-.fund-box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px solid white;
-}
 
 .fund-box .title {
     color: white;
     font-size: 20px;
-    margin-bottom: 50px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .fund-box div {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .fund-box label {
     color: white;
+    width: 100px; 
+    text-align: right; 
+    margin-right: 10px; 
 }
 
 .fund-box input[type="text"] {
     padding: 5px;
     margin-right: 5px;
+    width: 100px;
 }
 
 .fund-box button {
@@ -136,73 +130,84 @@ img {
     border: none;
     color: white;
     cursor: pointer;
+    border-radius: 5px;
+    width: 100px; 
 }
 
 .fund-box button:hover {
     background-color: #45a049;
 }
-#add-funds-button:disabled {
+
+.fund-box button:disabled {
     background-color: #888; 
     cursor: not-allowed; 
 }
-#bet-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
+
+.action-box .title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .action-box {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     border: 1px solid white;
+    padding: 15px;
+    border-radius: 5px;
 }
 
-.action-box .title {
-    color: white;
-    font-size: 20px;
-    margin-bottom: 50px;
-}
-
-.button-container {
+.action-box .button-container {
     display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .action-box button {
-    padding: 5px 10px;
+    flex: 1;
+    margin: 5px;
+    padding: 10px;
     background-color: #4CAF50;
     border: none;
     color: white;
     cursor: pointer;
-    margin: 5px;
+    border-radius: 5px;
 }
 
 .action-box button:last-child {
     margin-right: 0;
 }
 
-.action-box button:hover {
-    background-color: #45a049;
+.action-box button:disabled {
+    background-color: #888; 
+    cursor: not-allowed; 
 }
 
-#next-round-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
+.winner-display {
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
 }
-#new-game-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
+
+.text-style {
+    color: white;
+    font-size: 16px;
 }
-#call-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: white;
+    margin-right: 20px;
 }
-#raise-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
-}
-#fold-button:disabled {
-    background-color: #888; 
-    cursor: not-allowed; 
+
+.game-info div {
+    margin-top: 5px;
 }
